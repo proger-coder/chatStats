@@ -33,13 +33,14 @@ fs.readFile('./chatFolder/result.json', (err, data) => {
     });
     names_posts = Object.fromEntries(ascen);
 
-    // Object.keys(names_posts).forEach(author => {
-    //     personal(author)
-    // });
+    Object.keys(names_posts).forEach(author => {
+        personal(author)
+    });
     console.table(names_posts);
-    setTimeout(()=>{
-        personal('Ayrat');
-    },3000)
+
+    // setTimeout(()=>{
+    //     personal('Понтелей Мтс');
+    // },3000);
 
 });
 
@@ -67,9 +68,12 @@ function personal(author){
         return nc2[1]-nc1[1]
         });
     names_posts[author].allWords = Object.fromEntries(ascen);
-    console.log(author,'\n',names_posts[author]);
+    console.log(author);
+    console.table(ascen.slice(0,30));
+    //console.log(author,'\n',names_posts[author]);
 }
 
+// убрать всю не-кириллическую фигню типа смайлоф. Откуда берутся '' ???
 function editString(rawString){
     return rawString
         .replace(/[\s.,%()"'_?!-:]+/gm,' ')
