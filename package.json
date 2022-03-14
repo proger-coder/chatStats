@@ -1,0 +1,7 @@
+{
+  "name": "chatParser",
+  "version": "1.0.0",
+  "dependencies": {
+    "jsdom": "^19.0.0"
+  }
+}
