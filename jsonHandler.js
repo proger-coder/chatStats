@@ -1,5 +1,22 @@
 const fs = require('fs');
 const path = require('path');
+const express = require('express');
+const {response} = require("express");
+const exP = express();
+const body_parser = require('body-parser'); //парсить данные из формы
+/* запуск сервера */
+const port = process.env.PORT || 3000;
+exP.listen(port,()=>{console.log(`server's listening on port ${port}`)});
+
+/* задаём папку со статикой */
+exP.use(express.static('public'));
+
+/* задаём метод чтения ответа ?!?!?! а-ля body parser */
+exP.use(express.json());
+exP.use(body_parser.urlencoded({extended:true})); //парсить данные из формы
+
+/* задаём шаблонизатор */
+exP.set('view engine','pug');
 
 let chatArray = [];
 let names_posts = {};
@@ -51,7 +68,7 @@ function personal(author){
             && typeof(message.text)==='string' //чтобы не попасть на ссылки
             && !message.forwarded_from){
                 let strEdited = editString(message.text); //форматированная строка
-                let stringArray = strEdited.split(' '); // массив из этой форматированной строки
+                let stringArray = strEdited.split(' ').filter(el => el!==''); // массив из этой форматированной строки
 
                 stringArray.forEach(word => {
                     if(!names_posts[author].allWords[word]){
@@ -69,15 +86,26 @@ function personal(author){
         });
     names_posts[author].allWords = Object.fromEntries(ascen);
     console.log(author);
-    console.table(ascen.slice(0,30));
+    //console.table(ascen.slice(0,30)); // красивая табличка на каждого человека
     //console.log(author,'\n',names_posts[author]);
 }
 
-// убрать всю не-кириллическую фигню типа смайлоф. Откуда берутся '' ???
 function editString(rawString){
     return rawString
-        .replace(/[\s.,%()"'_?!-:]+/gm,' ')
-        .replace(/[\s]+/gm,' ')
+        // .replace(/[\s.,%()"'_?!-:]+/gm,' ')
+        // .replace(/[\s]+/gm,' ')
         .toLowerCase()
+        .replace(/[^а-яё]/gm,' ')
         .trim()
 }
+
+exP.get('/', (request,response)=>{
+    response.render('form');
+})
+
+exP.post('/sendFile', (request,response)=>{
+    let write = fs.createWriteStream('./out.json');
+    request.pipe(write); //файл создаётся, но криво (лишние строки)
+    console.log(request)
+    response.send('Fck');
+})
