@@ -1,6 +1,10 @@
 {
   "name": "chatParser",
   "version": "1.0.0",
+  "main": "jsonHandler.js",
+  "scripts": {
+    "start": "node jsonHandler.js"
+  },
   "dependencies": {
     "body-parser": "^1.19.2",
     "cookie-parser": "^1.4.6",
