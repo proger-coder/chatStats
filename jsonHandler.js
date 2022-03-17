@@ -4,6 +4,7 @@ const express = require('express');
 const {response} = require("express");
 const exP = express();
 const body_parser = require('body-parser'); //парсить данные из формы
+
 /* запуск сервера */
 const port = process.env.PORT || 3000;
 exP.listen(port,()=>{console.log(`server's listening on port ${port}`)});
@@ -11,55 +12,11 @@ exP.listen(port,()=>{console.log(`server's listening on port ${port}`)});
 /* задаём папку со статикой */
 exP.use(express.static('public'));
 
-/* задаём метод чтения ответа ?!?!?! а-ля body parser */
-exP.use(express.json());
-exP.use(body_parser.urlencoded({extended:true})); //парсить данные из формы
-
 /* задаём шаблонизатор */
 exP.set('view engine','pug');
 
 let chatArray = [];
 let names_posts = {};
-
-fs.readFile('./chatFolder/result.json', (err, data) => {
-    if (err) throw err;
-    chatArray = JSON.parse(data.toString()).messages;
-        //заполнение объекта именами и счётчиками сообщений
-    chatArray.forEach(message => {
-
-        if(message.from !== undefined){
-            names_posts[message.from]?
-                names_posts[message.from].total++ :
-                names_posts[message.from]={total:1};
-
-            if(message.text && !message.forwarded_from && typeof(message.text)==='string'){
-                names_posts[message.from].ownText?
-                    names_posts[message.from].ownText++ :
-                    names_posts[message.from].ownText=1;
-            }
-            if(message.forwarded_from){
-                names_posts[message.from].fwded?
-                    names_posts[message.from].fwded++ :
-                    names_posts[message.from].fwded=1;
-            }
-        }
-    })
-        //массив из пар К-З и его сортировка по числу сообщений total:
-    let ascen = Object.entries(names_posts).sort(function (nc1,nc2){
-        return nc2[1].total-nc1[1].total
-    });
-    names_posts = Object.fromEntries(ascen);
-
-    Object.keys(names_posts).forEach(author => {
-        personal(author)
-    });
-    console.table(names_posts);
-
-    // setTimeout(()=>{
-    //     personal('Понтелей Мтс');
-    // },3000);
-
-});
 
 function personal(author){
     names_posts[author].allWords = {};
@@ -103,9 +60,57 @@ exP.get('/', (request,response)=>{
     response.render('form');
 })
 
-exP.post('/sendFile', (request,response)=>{
-    let write = fs.createWriteStream('./out.json');
-    request.pipe(write); //файл создаётся, но криво (лишние строки)
-    console.log(request)
-    response.send('Fck');
+exP.post('/sendFile',(request,response)=>{
+
+    let ch = '';
+    request.on('data',chunk=> ch+=chunk);
+    request.on('end', ()=>{
+            console.log('1: received full file data');
+
+        let entrary = ch.slice(144,ch.length-44); //обрезанное без лишних вебкит-строк
+        fs.writeFileSync('./out.json',entrary);
+            console.log('2: file wrote to disk');
+
+        fs.readFile('./out.json', (err, data) => {
+            if (err) throw err;
+            chatArray = JSON.parse(data.toString()).messages;
+            //заполнение объекта именами и счётчиками сообщений
+            chatArray.forEach(message => {
+
+                if(message.from !== undefined){
+                    names_posts[message.from]?
+                        names_posts[message.from].total++ :
+                        names_posts[message.from]={total:1};
+
+                    if(message.text && !message.forwarded_from && typeof(message.text)==='string'){
+                        names_posts[message.from].ownText?
+                            names_posts[message.from].ownText++ :
+                            names_posts[message.from].ownText=1;
+                    }
+                    if(message.forwarded_from){
+                        names_posts[message.from].fwded?
+                            names_posts[message.from].fwded++ :
+                            names_posts[message.from].fwded=1;
+                    }
+                }
+            })
+            //массив из пар К-З и его сортировка по числу сообщений total:
+            let ascen = Object.entries(names_posts).sort(function (nc1,nc2){
+                return nc2[1].total-nc1[1].total
+            });
+            names_posts = Object.fromEntries(ascen);
+
+            Object.keys(names_posts).forEach(author => {
+                personal(author)
+            });
+            console.table(names_posts);
+
+            // setTimeout(()=>{
+            //     personal('Понтелей Мтс');
+            // },3000);
+            response.render('stats',{x:names_posts})
+        });
+    });
+
+    //request.pipe(fs.createWriteStream('./downloaded/out.json')); //файл создаётся, но криво (лишние строки)
 })
