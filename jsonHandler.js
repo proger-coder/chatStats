@@ -68,10 +68,10 @@ exP.post('/sendFile',(request,response)=>{
             console.log('1: received full file data');
 
         let entrary = ch.slice(144,ch.length-44); //обрезанное без лишних вебкит-строк
-        fs.writeFileSync('./out.json',entrary);
+        fs.writeFileSync('./uploads/out.json',entrary);
             console.log('2: file wrote to disk');
 
-        fs.readFile('./out.json', (err, data) => {
+        fs.readFile('./uploads/out.json', (err, data) => {
             if (err) throw err;
             chatArray = JSON.parse(data.toString()).messages;
             //заполнение объекта именами и счётчиками сообщений
