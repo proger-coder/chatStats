@@ -1,3 +1,18 @@
-h1  Kaka
-br
-p #{Object.keys(x)}
+include settings
+div(style="margin: 0 auto;")
+    h3  Активные участники чата
+    hr
+    table
+        caption Статистика
+            tr
+               th(class="author") Автор
+               th(class="num") Всего
+               th(class="num") Своих
+               th(class="num") Пересланных
+            each author in Object.keys(names_posts)
+                tr
+                    td(class="author") #{author}
+                    td(class="num") #{names_posts[author].total}
+                    td(class="num") #{names_posts[author].ownText}
+                    td(class="num") #{names_posts[author].fwded}
+

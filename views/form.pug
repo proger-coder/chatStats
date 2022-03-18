@@ -1,5 +1,10 @@
-form(id="uploadForm" enctype="multipart/form-data" action="/sendFile" method="POST")
-    input(type="file" name="file" value="" id="fileLoader")
-    button(class="button" type="submit" name="") Отправить
+include settings
+
+main(class="form-signin")
+    form(id="uploadForm" enctype="multipart/form-data" action="/sendFile" method="POST")
+        h1(class="h3 mb-3 fw-normal") Выберите json-файл чата
+        div(class="form-floating")
+            input(type="file" name="file" class="form-control" id="fileLoader")
+            button(class="w-100 btn btn-lg btn-primary" type="submit") Отправить
 
 
