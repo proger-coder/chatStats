@@ -4,6 +4,7 @@ const express = require('express');
 const {response} = require("express");
 const exP = express();
 const body_parser = require('body-parser'); //парсить данные из формы
+const punycode = require('punycode/'); // пынеход для кодировки
 
 /* запуск сервера */
 const port = process.env.PORT || 3000;
@@ -63,12 +64,15 @@ exP.get('/', (request,response)=>{
 exP.post('/sendFile',(request,response)=>{
     chatArray = [];
     names_posts = {};
-    let ch = '';
-    request.on('data',chunk=> ch+=chunk);
+    let chunks = [];
+    request.on('data',chunk=> chunks.push(chunk));
     request.on('end', ()=>{
             console.log('1: received full file data');
+        let data = Buffer.concat(chunks).toString('utf8')
 
-        let cuttedString = ch.slice(144,ch.length-44); //обрезанное без лишних вебкит-строк
+        let cuttedString = data.slice(144,data.length-44); //обрезанное без лишних вебкит-строк
+        //let cuttedString = punycode.toUnicode(ch.slice(144,ch.length-44)); //обработка Пынеходом
+
         chatArray = JSON.parse(cuttedString).messages;
 
             if(chatArray.length > 0){
