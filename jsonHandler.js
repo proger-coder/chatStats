@@ -3,8 +3,6 @@ const path = require('path');
 const express = require('express');
 const {response} = require("express");
 const exP = express();
-const body_parser = require('body-parser'); //парсить данные из формы
-const punycode = require('punycode/'); // пынеход для кодировки
 
 /* запуск сервера */
 const port = process.env.PORT || 3000;

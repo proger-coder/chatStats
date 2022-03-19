@@ -6,13 +6,14 @@ div(style="margin: 0 auto;")
         caption Статистика
             tr
                th(class="author") Автор
-               th(class="num") Всего
-               th(class="num") Своих
+               th(class="num") Всего сообщений
+               th(class="num") Написанных лично
                th(class="num") Пересланных
+               th(class="num") Оригинальность
             each author in Object.keys(names_posts)
                 tr
                     td(class="author") #{author}
                     td(class="num") #{names_posts[author].total}
                     td(class="num") #{names_posts[author].ownText}
                     td(class="num") #{names_posts[author].fwded}
-
+                    td(class="num") #{(names_posts[author].ownText/names_posts[author].total).toFixed(2)*100} %
