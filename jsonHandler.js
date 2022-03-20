@@ -14,10 +14,10 @@ exP.use(express.static('public'));
 /* задаём шаблонизатор */
 exP.set('view engine','pug');
 
-let chatArray = [];
-let names_posts = {};
+// let chatArray = [];
+// let names_posts = {};
 
-function personal(author){
+function personal(author, names_posts, chatArray){
     names_posts[author].allWords = {};
     chatArray.forEach(message => {
         if(message.from === author
@@ -41,8 +41,8 @@ function personal(author){
         return nc2[1]-nc1[1]
         });
     names_posts[author].allWords = Object.fromEntries(ascen);
-    console.log(author);
-    console.table(ascen.slice(0,30)); // красивая табличка на каждого человека
+    //console.log(author);
+    //console.table(ascen.slice(0,30)); // красивая табличка на каждого человека
     //console.log(author,'\n',names_posts[author]);
 }
 
@@ -60,18 +60,21 @@ exP.get('/', (request,response)=>{
 })
 
 exP.post('/sendFile',(request,response)=>{
-    chatArray = [];
-    names_posts = {};
+    let chatArray = [];
+    let names_posts = {};
     let chunks = [];
+    let chatName = '--';
+
     request.on('data',chunk=> chunks.push(chunk));
     request.on('end', ()=>{
             console.log('1: received full file data');
         let data = Buffer.concat(chunks).toString('utf8')
 
-        let cuttedString = data.slice(144,data.length-44); //обрезанное без лишних вебкит-строк
-        //let cuttedString = punycode.toUnicode(ch.slice(144,ch.length-44)); //обработка Пынеходом
+        let cuttedString = data.slice(144,data.length-44); //обрезанное без лишних вебкит-строк. А ЕСЛИ НЕТ ВЕБКИТ_СТРОК?!?!?
 
-        chatArray = JSON.parse(cuttedString).messages;
+        let fullChatObject = JSON.parse(cuttedString);
+        chatArray = fullChatObject.messages;
+        chatName = fullChatObject.name;
 
             if(chatArray.length > 0){
                 console.log('2: chat array filled,length:', chatArray.length);
@@ -106,57 +109,15 @@ exP.post('/sendFile',(request,response)=>{
         names_posts = Object.fromEntries(ascen);
 
         Object.keys(names_posts).forEach(author => {
-            personal(author)
+            personal(author, names_posts, chatArray)
         });
-        console.table(names_posts); //Объект вида {Автор: {total:567, ownText:123, fwded:43, allWords:{'не':34}}}
+        //console.table(names_posts); //Объект вида {Автор: {total:567, ownText:123, fwded:43, allWords:{'не':34}}}
 
-        console.log(names_posts['Понтелей Мтс'])
         // setTimeout(()=>{
         //     personal('Понтелей Мтс');
         // },3000);
 
-        response.render('stats',{names_posts:names_posts})
+        response.render('stats',{names_posts,chatName})
 
-/*        fs.writeFileSync('./uploads/out.json',entrary);
-            console.log('2: file wrote to disk');
-        fs.readFile('./uploads/out.json', (err, data) => {
-            if (err) throw err;
-            chatArray = JSON.parse(data.toString()).messages;
-            //заполнение объекта именами и счётчиками сообщений
-            chatArray.forEach(message => {
-
-                if(message.from !== undefined){
-                    names_posts[message.from]?
-                        names_posts[message.from].total++ :
-                        names_posts[message.from]={total:1};
-
-                    if(message.text && !message.forwarded_from && typeof(message.text)==='string'){
-                        names_posts[message.from].ownText?
-                            names_posts[message.from].ownText++ :
-                            names_posts[message.from].ownText=1;
-                    }
-                    if(message.forwarded_from){
-                        names_posts[message.from].fwded?
-                            names_posts[message.from].fwded++ :
-                            names_posts[message.from].fwded=1;
-                    }
-                }
-            })
-            //массив из пар К-З и его сортировка по числу сообщений total:
-            let ascen = Object.entries(names_posts).sort(function (nc1,nc2){
-                return nc2[1].total-nc1[1].total
-            });
-            names_posts = Object.fromEntries(ascen);
-
-            Object.keys(names_posts).forEach(author => {
-                personal(author)
-            });
-            console.table(names_posts);
-
-            // setTimeout(()=>{
-            //     personal('Понтелей Мтс');
-            // },3000);
-            response.render('stats',{x:names_posts})
-        });*/
     });
 })
