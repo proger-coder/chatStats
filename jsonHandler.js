@@ -14,9 +14,6 @@ exP.use(express.static('public'));
 /* задаём шаблонизатор */
 exP.set('view engine','pug');
 
-// let chatArray = [];
-// let names_posts = {};
-
 function personal(author, names_posts, chatArray){
     names_posts[author].allWords = {};
     chatArray.forEach(message => {
@@ -59,6 +56,10 @@ exP.get('/', (request,response)=>{
     response.render('form');
 })
 
+exP.get('/personal/:author', (request,response)=>{
+    response.render('personal',{});
+})
+
 exP.post('/sendFile',(request,response)=>{
     let chatArray = [];
     let names_posts = {};
@@ -84,9 +85,13 @@ exP.post('/sendFile',(request,response)=>{
         chatArray.forEach(message => {
 
             if(message.from !== undefined){
-                names_posts[message.from]?
-                    names_posts[message.from].total++ :
+                if(names_posts[message.from]){
+                    names_posts[message.from].total++;
+                    names_posts[message.from].from_id.total++;
+                } else {
                     names_posts[message.from]={total:1};
+                    names_posts[message.from].from_id = {total:1};
+                }
 
                 if(message.text && !message.forwarded_from && typeof(message.text)==='string'){
                     names_posts[message.from].ownText?

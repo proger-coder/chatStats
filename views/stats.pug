@@ -11,7 +11,8 @@ div(style="margin: 0 auto;")
                th(class="num") Оригинальность
             each author in Object.keys(names_posts)
                 tr
-                    td(class="author") #{author}
+                    td(class="author")
+                        a(href=`/personal/${author}` data-author=author) #{author}
                     td(class="num") #{names_posts[author].total}
                     td(class="num") #{names_posts[author].ownText}
                     td(class="num") #{names_posts[author].fwded}
