@@ -6,7 +6,7 @@ div(style="margin: 0 auto;")
             tr
                th(class="author") Автор
                th(class="num") Всего сообщений
-               th(class="num") Написанных лично
+               th(class="num") Набранных лично
                th(class="num") Пересланных
                th(class="num") Оригинальность
             each author in Object.keys(names_posts)
@@ -15,4 +15,11 @@ div(style="margin: 0 auto;")
                     td(class="num") #{names_posts[author].total}
                     td(class="num") #{names_posts[author].ownText}
                     td(class="num") #{names_posts[author].fwded}
-                    td(class="num") #{(names_posts[author].ownText/names_posts[author].total).toFixed(2)*100} %
+                    -
+                        let orig = names_posts[author].ownText ?
+                            ((names_posts[author].ownText/names_posts[author].total)*100).toFixed():
+                            0
+                        let rgba = `rgb(${250-orig},${+orig+120},125)`
+                        console.log(orig, '/', rgba)
+                    td(class="num" style={'background-color':rgba,'font-weight':600}) #{orig} %
+
