@@ -73,7 +73,8 @@ exP.get('/personal/*', (request,response)=>{
 })
 
 exP.post('/sendFile',(request,response)=>{
-
+    chatArray = [];
+    names_posts = {};
     let chunks = [];
     let chatName = '--';
 
