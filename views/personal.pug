@@ -1,2 +1,14 @@
 include settings
-h3 #{slug}
+div(style="margin: 0 auto;")
+    h3 #{slug}
+    table(class="table")
+        caption Статистика
+            tr
+                th(class="") Слово
+                th(class="") Встречено раз
+
+            each pair in persWordsArray
+                tr
+                    td(class="") #{pair[0]}
+                    td(class="") #{pair[1]}
+

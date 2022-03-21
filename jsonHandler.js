@@ -42,8 +42,10 @@ function personal(author){
         });
     names_posts[author].allWords = Object.fromEntries(ascen);
     //console.log(author);
-    console.table(ascen.slice(0,30)); // красивая табличка на каждого человека
-    console.log(author,'\n',names_posts[author]);
+    //console.table(ascen.slice(0,30)); // красивая табличка на каждого человека
+    console.log(ascen)
+    //console.log(author,'\n',names_posts[author]);
+    return ascen.slice(0,500);
 }
 
 function editString(rawString){
@@ -62,8 +64,12 @@ exP.get('/', (request,response)=>{
 exP.get('/personal/*', (request,response)=>{
     let slug = request.params[0];
     console.log(slug);
-    personal(slug);
-    response.render('personal',{slug,names_posts});
+    //нафуя это тут??
+    // Object.keys(names_posts).forEach(author => {
+    //     personal(author, names_posts, chatArray)
+    // });
+    let persWordsArray = personal(slug);
+    response.render('personal',{slug,names_posts,persWordsArray});
 })
 
 exP.post('/sendFile',(request,response)=>{
@@ -118,11 +124,6 @@ exP.post('/sendFile',(request,response)=>{
                         });
         //новый объект из уже отсортированного массива
         names_posts = Object.fromEntries(ascen);
-
-            //нафуя это тут??
-        // Object.keys(names_posts).forEach(author => {
-        //     personal(author, names_posts, chatArray)
-        // });
 
         //console.table(names_posts); //Объект вида {Автор: {total:567, ownText:123, fwded:43, allWords:{'не':34}}}
 
