@@ -14,7 +14,10 @@ exP.use(express.static('public'));
 /* задаём шаблонизатор */
 exP.set('view engine','pug');
 
-function personal(author, names_posts, chatArray){
+let chatArray = [];
+let names_posts = {};
+
+function personal(author){
     names_posts[author].allWords = {};
     chatArray.forEach(message => {
         if(message.from === author
@@ -39,8 +42,8 @@ function personal(author, names_posts, chatArray){
         });
     names_posts[author].allWords = Object.fromEntries(ascen);
     //console.log(author);
-    //console.table(ascen.slice(0,30)); // красивая табличка на каждого человека
-    //console.log(author,'\n',names_posts[author]);
+    console.table(ascen.slice(0,30)); // красивая табличка на каждого человека
+    console.log(author,'\n',names_posts[author]);
 }
 
 function editString(rawString){
@@ -56,13 +59,15 @@ exP.get('/', (request,response)=>{
     response.render('form');
 })
 
-exP.get('/personal/:author', (request,response)=>{
-    response.render('personal',{});
+exP.get('/personal/*', (request,response)=>{
+    let slug = request.params[0];
+    console.log(slug);
+    personal(slug);
+    response.render('personal',{slug,names_posts});
 })
 
 exP.post('/sendFile',(request,response)=>{
-    let chatArray = [];
-    let names_posts = {};
+
     let chunks = [];
     let chatName = '--';
 
