@@ -110,6 +110,7 @@ exP.post('/sendFile',(request,response)=>{
                 }
             }
         })
+
         //массив из пар К-З и его сортировка по total числу сообщений :
         let ascen = Object.entries(names_posts).sort
                         (function (nc1,nc2){
@@ -124,10 +125,6 @@ exP.post('/sendFile',(request,response)=>{
         // });
 
         //console.table(names_posts); //Объект вида {Автор: {total:567, ownText:123, fwded:43, allWords:{'не':34}}}
-
-        // setTimeout(()=>{
-        //     personal('Понтелей Мтс');
-        // },3000);
 
         response.render('stats',{names_posts,chatName})
     });
