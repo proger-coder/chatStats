@@ -118,9 +118,11 @@ exP.post('/sendFile',(request,response)=>{
         //новый объект из уже отсортированного массива
         names_posts = Object.fromEntries(ascen);
 
-        Object.keys(names_posts).forEach(author => {
-            personal(author, names_posts, chatArray)
-        });
+            //нафуя это тут??
+        // Object.keys(names_posts).forEach(author => {
+        //     personal(author, names_posts, chatArray)
+        // });
+
         //console.table(names_posts); //Объект вида {Автор: {total:567, ownText:123, fwded:43, allWords:{'не':34}}}
 
         // setTimeout(()=>{
@@ -128,6 +130,5 @@ exP.post('/sendFile',(request,response)=>{
         // },3000);
 
         response.render('stats',{names_posts,chatName})
-
     });
 })
