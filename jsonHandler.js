@@ -77,7 +77,7 @@ exP.post('/sendFile',(request,response)=>{
     names_posts = {};
     let chunks = [];
     let chatName = '--';
-
+        console.log('RH = ',request.headers);
     request.on('data',chunk=> chunks.push(chunk));
     request.on('end', ()=>{
             console.log('1: received full file data');
