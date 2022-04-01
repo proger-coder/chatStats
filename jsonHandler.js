@@ -35,17 +35,18 @@ function personal(author){
                 });
         }
     });
-    let ascen = Object
+    let descenByAmount = Object
         .entries(names_posts[author].allWords)
         .sort(function (nc1,nc2){
         return nc2[1]-nc1[1]
         });
-    names_posts[author].allWords = Object.fromEntries(ascen);
+    names_posts[author].allWords = Object.fromEntries(descenByAmount);
     //console.log(author);
-    //console.table(ascen.slice(0,30)); // красивая табличка на каждого человека
-    console.log(ascen)
+    //console.table(descenByAmount.slice(0,30)); // красивая табличка на каждого человека
+    //console.log(descenByAmount)
     //console.log(author,'\n',names_posts[author]);
-    return ascen.slice(0,500);
+    //return descenByAmount.slice(0,500);
+    return descenByAmount;
 }
 
 function editString(rawString){
@@ -64,10 +65,6 @@ exP.get('/', (request,response)=>{
 exP.get('/personal/*', (request,response)=>{
     let slug = request.params[0];
     console.log(slug);
-    //нафуя это тут??
-    // Object.keys(names_posts).forEach(author => {
-    //     personal(author, names_posts, chatArray)
-    // });
     let persWordsArray = personal(slug);
     response.render('personal',{slug,names_posts,persWordsArray});
 })
@@ -77,7 +74,7 @@ exP.post('/sendFile',(request,response)=>{
     names_posts = {};
     let chunks = [];
     let chatName = '--';
-        console.log('RH = ',request.headers);
+
     request.on('data',chunk=> chunks.push(chunk));
     request.on('end', ()=>{
             console.log('1: received full file data');
