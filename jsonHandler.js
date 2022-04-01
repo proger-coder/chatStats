@@ -1,8 +1,31 @@
-const fs = require('fs');
-const path = require('path');
 const express = require('express');
 const {response} = require("express");
 const exP = express();
+
+/* мытьё мангуста */
+const {mongoose,Schema} = require('mongoose');
+const telegramSchema = new Schema({
+        parsedTime:{
+            type:String,
+            default:Date.now().toString()
+        },
+        chatName: {
+            type: String,
+            required: true
+        },
+        activeUsers: {
+            type: Number,
+            required: true
+        },
+        totalMessages: {
+            type:Number,
+            required: true
+        }
+    },
+    { collection : 'telegram-collection' }
+);
+const telegramModel = mongoose.model('_______',telegramSchema);
+const uri = 'mongodb+srv://telegram-db-admin:telegram-db-admin@cluster0.kv1hn.mongodb.net/telegram-database?retryWrites=true&w=majority';
 
 /* запуск сервера */
 const port = process.env.PORT || 3000;
@@ -17,6 +40,7 @@ exP.set('view engine','pug');
 let chatArray = [];
 let names_posts = {};
 
+// прогон всего чата по автору, создание массива его слов
 function personal(author){
     names_posts[author].allWords = {};
     chatArray.forEach(message => {
@@ -35,24 +59,25 @@ function personal(author){
                 });
         }
     });
+
+    // создаём из пар к-з отсортированный массив (сорт по убыванию встречаемости слова)
     let descenByAmount = Object
         .entries(names_posts[author].allWords)
         .sort(function (nc1,nc2){
         return nc2[1]-nc1[1]
         });
+    // descenByAmount - массив вида [ [ 'не', 107 ],[ 'в', 67 ],['и', 63 ]...]
+
+    // до этого объект names_posts[author].allWords был вперемешку: {'дима': 2, 'какие': 1,'сводки': 1,'с': 18}
     names_posts[author].allWords = Object.fromEntries(descenByAmount);
-    //console.log(author);
-    //console.table(descenByAmount.slice(0,30)); // красивая табличка на каждого человека
-    //console.log(descenByAmount)
-    //console.log(author,'\n',names_posts[author]);
-    //return descenByAmount.slice(0,500);
+    // но теперь он отсортирован по убыванию встречаемости слова: {'не': 107,'в': 67,'и': 63,'что': 48}
+
     return descenByAmount;
 }
 
+// резка и обработка строки
 function editString(rawString){
     return rawString
-        // .replace(/[\s.,%()"'_?!-:]+/gm,' ')
-        // .replace(/[\s]+/gm,' ')
         .toLowerCase()
         .replace(/[^а-яё]/gm,' ')
         .trim()
@@ -62,6 +87,7 @@ exP.get('/', (request,response)=>{
     response.render('form');
 })
 
+// маршрут для отдельного участника
 exP.get('/personal/*', (request,response)=>{
     let slug = request.params[0];
     console.log(slug);
@@ -69,6 +95,7 @@ exP.get('/personal/*', (request,response)=>{
     response.render('personal',{slug,names_posts,persWordsArray});
 })
 
+// обработка прилёта формы
 exP.post('/sendFile',(request,response)=>{
     chatArray = [];
     names_posts = {};
@@ -116,14 +143,37 @@ exP.post('/sendFile',(request,response)=>{
         })
 
         //массив из пар К-З и его сортировка по total числу сообщений :
-        let ascen = Object.entries(names_posts).sort
+        let descen = Object.entries(names_posts).sort
                         (function (nc1,nc2){
                             return nc2[1].total-nc1[1].total
                         });
         //новый объект из уже отсортированного массива
-        names_posts = Object.fromEntries(ascen);
+        names_posts = Object.fromEntries(descen);
 
         //console.table(names_posts); //Объект вида {Автор: {total:567, ownText:123, fwded:43, allWords:{'не':34}}}
+
+        // работа с Мангустой
+        try {
+            let date = new Date();
+            let month = date.getMonth()+1 > 9 ? `${date.getMonth()+1}`:`0${date.getMonth()+1}`;
+            let day = date.getDate() > 9 ? `${date.getDate()}`:`0${date.getDate()}`;
+            let hours = date.getHours() > 9? `${date.getHours()}`:`0${date.getHours()}`;
+            let mins = date.getMinutes() > 9? `${date.getMinutes()}`:`0${date.getMinutes()}`;
+
+            mongoose.connect(uri, {useNewUrlParser: true,}).then(res => {
+                console.log('Mongo DB responded');
+                const document = new telegramModel({
+                    parsedTime:`${day}-${month}-${date.getFullYear()}, ${hours}:${mins}`,
+                    chatName: chatName,
+                    activeUsers: Object.keys(names_posts).length,
+                    //считаем как сумму всех сообщений по каждому участнику
+                    totalMessages: Object.values(names_posts).reduce((acc,val) => {return acc + val.total},0)
+                });
+                document.save();
+            });
+        } catch (e) {
+            console.log(e);
+        }
 
         response.render('stats',{names_posts,chatName})
     });
