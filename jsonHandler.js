@@ -33,6 +33,7 @@ exP.listen(port,()=>{console.log(`server's listening on port ${port}`)});
 
 /* задаём папку со статикой */
 exP.use(express.static('public'));
+exP.use(express.urlencoded({extended:false}));
 
 /* задаём шаблонизатор */
 exP.set('view engine','pug');
@@ -93,6 +94,26 @@ exP.get('/personal/*', (request,response)=>{
     console.log(slug);
     let persWordsArray = personal(slug);
     response.render('personal',{slug,names_posts,persWordsArray});
+})
+
+// маршрут для одмен-панели
+exP.post('/adminPanel', (request,response)=>{
+    console.log(request.body);
+    if(request.body.password === 'admin'){
+        try {
+            mongoose.connect(uri, {useNewUrlParser: true,}).then(res => {
+                console.log('Mongo DB responded at admin Panel');
+                telegramModel.find({},function (err,records){
+                    if(err) return console.log(err);
+                    console.log('records = ',records)
+                    response.render('adminPanel',{records});
+                })
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
 })
 
 // обработка прилёта формы

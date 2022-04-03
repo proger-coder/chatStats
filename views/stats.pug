@@ -1,5 +1,11 @@
 include settings
 div(style="margin: 0 auto;")
+    main(class="form-signin")
+        form(id="adminForm" enctype="application/x-www-form-urlencoded" action="/adminPanel" method="POST")
+            h3(class="h3 mb-3 fw-normal") Админ-панель
+            div(class="form-outline mb-4")
+                input(type="password" name="password" class="form-control" id="password" placeholder="введите пароль админа")
+                button(class="w-100 btn btn-lg btn-warning" type="submit") Вход
     h3 Статистика чата #{chatName}
     table(class="table")
         caption Статистика

@@ -1,0 +1,16 @@
+include settings
+div(style="margin: 0 auto;")
+    h3 Статистика запросов (из базы данных)
+    table(class="table")
+        caption Статистика
+            tr
+                th(class="author") Время обработки
+                th(class="num") Название чата
+                th(class="num") Активных пользователей
+                th(class="num") Всего сообщений
+            each record in records
+                tr
+                    td(class="author") #{record.parsedTime}
+                    td(class="num") #{record.chatName}
+                    td(class="num") #{record.activeUsers}
+                    td(class="num") #{record.totalMessages}
