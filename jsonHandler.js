@@ -1,6 +1,8 @@
 const express = require('express');
 const {response} = require("express");
 const exP = express();
+const bcrypt = require('bcrypt');
+const passHash = '$2b$10$heN/Fcg6GX/.AMhpX.Jdm.MJo.UmX.1huWp7ZT2UO4KTIl/td20.6'
 
 /* мытьё мангуста */
 const {mongoose,Schema} = require('mongoose');
@@ -98,8 +100,9 @@ exP.get('/personal/*', (request,response)=>{
 
 // маршрут для одмен-панели
 exP.post('/adminPanel', (request,response)=>{
-    console.log(request.body);
-    if(request.body.password === 'admin'){
+    //console.log(request.body);
+    if(bcrypt.compareSync(request.body.password,passHash)){
+        console.log('password match!');
         try {
             mongoose.connect(uri, {useNewUrlParser: true,}).then(res => {
                 console.log('Mongo DB responded at admin Panel');
@@ -112,6 +115,8 @@ exP.post('/adminPanel', (request,response)=>{
         } catch (e) {
             console.log(e);
         }
+    } else {
+        console.log('unsuccessful logon into admin panel')
     }
 
 })
