@@ -98,6 +98,27 @@ exP.get('/personal/*', (request,response)=>{
     response.render('personal',{slug,names_posts,persWordsArray});
 })
 
+// маршрут для удаления
+exP.get('/delete/*', (request,response)=>{
+    let idToDel = request.params[0];
+    try {
+        mongoose.connect(uri, {useNewUrlParser: true,}).then(res => {
+            console.log('Mongo DB responded in delete section');
+            telegramModel.deleteOne({_id:idToDel},function (err){
+                if(err) return console.log(err);
+                console.log('deleted');
+
+                telegramModel.find({},function (err,records){
+                    if(err) return console.log(err);
+                    response.render('adminPanel',{records});
+                })
+            });
+        });
+    } catch (e) {
+        console.log(e);
+    }
+})
+
 // маршрут для одмен-панели
 exP.post('/adminPanel', (request,response)=>{
     //console.log(request.body);
@@ -108,7 +129,7 @@ exP.post('/adminPanel', (request,response)=>{
                 console.log('Mongo DB responded at admin Panel');
                 telegramModel.find({},function (err,records){
                     if(err) return console.log(err);
-                    console.log('records = ',records)
+                    //console.log('records = ',records)
                     response.render('adminPanel',{records});
                 })
             });

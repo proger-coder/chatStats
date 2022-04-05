@@ -4,13 +4,18 @@ div(style="margin: 0 auto;")
     table(class="table")
         caption Статистика
             tr
-                th(class="author") Время обработки
-                th(class="num") Название чата
-                th(class="num") Активных пользователей
-                th(class="num") Всего сообщений
+                th(class="") Время обработки
+                th(class="") Название чата
+                th(class="") Активных пользователей
+                th(class="") Всего сообщений
+                th(class="") Удалить
             each record in records
                 tr
-                    td(class="author") #{record.parsedTime}
-                    td(class="num") #{record.chatName}
-                    td(class="num") #{record.activeUsers}
-                    td(class="num") #{record.totalMessages}
+                    td(class="") #{record.parsedTime}
+                    td(class="") #{record.chatName}
+                    td(class="") #{record.activeUsers}
+                    td(class="") #{record.totalMessages}
+                    td(class="")
+                        a(href=`/delete/${record._id}`)
+                            button(class="w-100 btn btn-lg btn-danger remove") Удалить
+script(src='/script.js')
