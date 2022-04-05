@@ -29,3 +29,12 @@ body{
 .num{
     text-align: center;
 }
+
+p{
+    font-size:1.5rem;
+    margin-top:10px;
+}
+
+img{
+    border: 1px solid green;
+}

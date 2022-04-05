@@ -1,0 +1,26 @@
+include settings
+div(style="margin: 0 auto;")
+    a(href='/')
+        button(class="w-50 btn btn-lg btn-success") Назад
+    hr
+    p Для экспорта чата вам нужен Telegram Desktop. В верхнем правом углу нажмите на 3 точки:
+    img(src="/photos/dotsMenu.PNG")
+    p Выберите Экспорт истории чатов
+    img(src="/photos/exportHistory.PNG")
+    p Нажмите на HTML и выберите Машиночитаемый JSON
+    img(src="/photos/selectJSON.PNG")
+    p Уберите галки и установите лимит размера 55Мб
+    img(src="/photos/setSizeJSON.PNG")
+    p жмите "Экспортировать".
+    p Когда экспорт кончится, полученный файл подгрузите в форму на сайте
+    img(src="/photos/fileLoadForm.PNG")
+    p жмите "Отправить". Выйдет статистика
+    img(src="/photos/mainView.PNG")
+    p Нажатие на участника покажет статистику частоты использования слов
+    img(src="/photos/personalStats.PNG")
+    p Каждый факт подгрузки файла в форму фиксируется в базе данных Mongo. Это можно увидеть, войдя в админ-панель
+    img(src="/photos/adminPanel.PNG")
+    p Кнопка "Удалить" удаляет конкретную запись из БД и обновляет страницу
+    hr
+    a(href='/')
+        button(class="w-50 btn btn-lg btn-success") На главную

@@ -1,6 +1,9 @@
 include settings
 
 main(class="form-signin")
+    a(href='/guide')
+        button(class="w-50 btn btn-lg btn-warning") Инструкция
+    hr
     form(id="uploadForm" enctype="multipart/form-data" action="/sendFile" method="POST")
         h1(class="h3 mb-3 fw-normal") Выберите json-файл чата
         div(class="form-floating")

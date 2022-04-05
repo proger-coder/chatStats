@@ -90,6 +90,11 @@ exP.get('/', (request,response)=>{
     response.render('form');
 })
 
+//гайд
+exP.get('/guide', (request,response)=>{
+    response.render('guide')
+})
+
 // маршрут для отдельного участника
 exP.get('/personal/*', (request,response)=>{
     let slug = request.params[0];
