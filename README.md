@@ -1,4 +1,4 @@
-# Telegram chat parser 
+# Telegram chat parser  
 
 ### _Cтатистика группового или личного чата_
 
