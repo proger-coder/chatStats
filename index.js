@@ -1,5 +1,7 @@
 const express = require('express');
 //const {response} = require("express");
+const dotenv = require('dotenv');
+dotenv.config()
 const exP = express();
 const bcrypt = require('bcrypt');
 const passHash = '$2b$10$heN/Fcg6GX/.AMhpX.Jdm.MJo.UmX.1huWp7ZT2UO4KTIl/td20.6'
@@ -27,7 +29,7 @@ const telegramSchema = new Schema({
     { collection : 'telegram-collection' }
 );
 const telegramModel = mongoose.model('_______',telegramSchema);
-const uri = 'mongodb+srv://telegram-db-admin:telegram-db-admin@cluster0.kv1hn.mongodb.net/telegram-database?retryWrites=true&w=majority';
+const uri = process.env.MONGO_URL;
 
 /* запуск сервера */
 const port = process.env.PORT || 3000;
