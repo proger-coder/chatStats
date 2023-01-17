@@ -1,10 +1,10 @@
 {
   "name": "chatParser",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "pm2 start app.js"
+    "start": "node index.js",
+    "dev": "pm2 start index.js"
   },
   "dependencies": {
     "axios": "^0.26.1",

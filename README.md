@@ -10,4 +10,4 @@
 
 Статистики сохраняются в базе данных Mongo (каждый прогон чата через программу).
 Также имеется админ-панель для просмотра истории прогонов и удаления.
-Полная инструкция: https://telegchatparser.herokuapp.com/guide
+Полная инструкция: https://chatstats-production.up.railway.app/guide
